@@ -1,6 +1,8 @@
 package com.wora.smartbank;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,10 +14,10 @@ import java.io.PrintWriter;
 @WebServlet("/hello-servlet")
 public class HelloServlet extends HttpServlet {
 
-    @Inject
-    private Service service;
-
     private String message;
+
+    @Inject
+    private EntityManagerFactory emf;
 
     public void init() {
         message = "Hello World!";
@@ -23,12 +25,12 @@ public class HelloServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        String m = service.getMessage();
+
+        EntityManager entityManager = emf.createEntityManager();
 
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
         out.println("<h1>" + message + "</h1>");
-        out.println("<h1>" + m + "</h1>");
         out.println("</body></html>");
     }
 
