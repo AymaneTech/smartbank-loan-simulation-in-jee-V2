@@ -42,7 +42,6 @@ public class UnitTestPersistenceUnitInfo implements PersistenceUnitInfo {
         ds.setJdbcUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
         ds.setUsername("sa");
         ds.setPassword("");
-        ds.setDriverClassName("org.h2.Driver");
         return ds;
     }
 
