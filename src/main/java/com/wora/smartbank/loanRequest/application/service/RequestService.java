@@ -18,4 +18,5 @@ public interface RequestService {
     void delete(RequestId id);
 
     boolean existsById(RequestId id);
+    
 }
