@@ -41,7 +41,7 @@ public class DefaultRequestRepository implements RequestRepository {
     public Optional<Request> findById(RequestId id) {
         logger.debug("Searching for request with ID: {}", id.value());
         return TransactionManager.executeWithResult(emf, em -> {
-            Optional<Request> request = Optional.ofNullable(em.find(Request.class, id.value()));
+            Optional<Request> request = Optional.ofNullable(em.find(Request.class, id));
             logger.info("Request with ID {} {}", id.value(), request.isPresent() ? "found" : "not found");
             return request;
         });

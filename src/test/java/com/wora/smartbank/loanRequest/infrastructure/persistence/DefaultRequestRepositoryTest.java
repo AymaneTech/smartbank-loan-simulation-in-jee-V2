@@ -72,6 +72,31 @@ class DefaultRequestRepositoryTest {
         assertTrue(result.stream().anyMatch(r -> r.id().equals(r2.id())));
     }
 
+    @Test
+    @DisplayName("findById - given valid Id - return request")
+    public void findById_validId_ShouldReturnRequest() {
+        Request r = createRequest("aymane", "ayamne", "elamin");
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.persist(r);
+            System.out.println("saved");
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        }
+        em.clear();
+
+        Optional<Request> result = repository.findById(r.id());
+        System.out.println("hey" + result.get());
+
+
+        assertEquals(result.get().id(), r.id());
+
+    }
 
     private Request createRequest(String purpose, String firstName, String lastName) {
         return new Request(
