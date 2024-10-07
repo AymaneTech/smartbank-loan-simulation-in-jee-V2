@@ -12,10 +12,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
-public class DefaultPersistenceUnitInfo implements PersistenceUnitInfo {
+public class UnitTestPersistenceUnitInfo implements PersistenceUnitInfo {
     @Override
     public String getPersistenceUnitName() {
-        return "default";
+        return "unit-testing";
     }
 
     @Override
@@ -39,10 +39,10 @@ public class DefaultPersistenceUnitInfo implements PersistenceUnitInfo {
 //        ds.setJdbcUrl(Env.get("DB_URL"));
 //        ds.setUsername(Env.get("DB_USERNAME"));
 //        ds.setPassword(Env.get("DB_PASSWORD"));
-        ds.setJdbcUrl("jdbc:postgresql://localhost:5432/smart_bank");
-        ds.setUsername("postgres");
-        ds.setPassword("admin");
-        ds.setDriverClassName("org.postgresql.Driver");
+        ds.setJdbcUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
+        ds.setUsername("sa");
+        ds.setPassword("");
+        ds.setDriverClassName("org.h2.Driver");
         return ds;
     }
 
@@ -91,7 +91,8 @@ public class DefaultPersistenceUnitInfo implements PersistenceUnitInfo {
     }
 
     @Override
-    public String getPersistenceXMLSchemaVersion() { return "";
+    public String getPersistenceXMLSchemaVersion() {
+        return "";
     }
 
     @Override
