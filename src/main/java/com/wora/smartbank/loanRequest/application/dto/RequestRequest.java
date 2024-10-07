@@ -25,7 +25,7 @@ public record RequestRequest(
         @NotBlank String cin,
         @NotNull LocalDate dateOfBirth,
         @NotNull LocalDate employmentStartDate,
-        @NotNull Price monthlyIncome,
+        @NotNull Double monthlyIncome,
         @NotNull Boolean hasExistingLoans
 ) {
 }

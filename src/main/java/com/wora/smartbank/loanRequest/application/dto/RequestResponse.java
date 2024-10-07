@@ -21,7 +21,7 @@ public record RequestResponse(
         String cin,
         LocalDate dateOfBirth,
         LocalDate employmentStartDate,
-        Price monthlyIncome,
+        Double monthlyIncome,
         Boolean hasExistingLoans
 ) {
 }

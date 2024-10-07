@@ -84,10 +84,9 @@ public class DefaultRequestService implements RequestService {
             throw new InvalidRequestException(validationErrors);
         }
 
-        if (!calculationValidationService.validate(new LoanDetails(dto.project(), dto.amount(), dto.duration(), dto.monthly()))) {
-            ValidationErrors<RequestRequest> validationErrors = new ValidationErrors<>("loan calculation errors", Map.of("calculation", "loan calculation error"));
-            throw new InvalidRequestException(validationErrors);
-        }
-
+//        if (!calculationValidationService.validate(new LoanDetails(dto.project(), dto.amount(), dto.duration(), dto.monthly()))) {
+//            ValidationErrors<RequestRequest> validationErrors = new ValidationErrors<>("loan calculation errors", Map.of("calculation", "loan calculation error"));
+//            throw new InvalidRequestException(validationErrors);
+//        }
     }
 }

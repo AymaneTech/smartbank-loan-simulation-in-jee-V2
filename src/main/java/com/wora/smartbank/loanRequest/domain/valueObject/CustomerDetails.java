@@ -48,13 +48,8 @@ public record CustomerDetails(
         @NotNull
         LocalDate employmentStartDate,
 
-        @Embedded
-        @AttributeOverrides({
-                @AttributeOverride(name = "amount", column = @Column(name = "customer_monthly_income_amount")),
-                @AttributeOverride(name = "currency", column = @Column(name = "customer_monthly_income_currency"))
-        })
         @NotNull
-        Price monthlyIncome,
+        Double monthlyIncome,
 
         @Column(name = "customer_has_existing_loans")
         @NotNull

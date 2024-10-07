@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class Request implements Serializable {
 
     @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "id"))
+    @AttributeOverride(name = "value", column = @Column(name = "id", nullable = false))
     private RequestId id;
 
     @Embedded
@@ -25,7 +25,7 @@ public class Request implements Serializable {
     @Embedded
     private Timestamp timestamp;
 
-    protected Request() {
+    public Request() {
     }
 
     public Request(LoanDetails loanDetails, CustomerDetails customerDetails) {
