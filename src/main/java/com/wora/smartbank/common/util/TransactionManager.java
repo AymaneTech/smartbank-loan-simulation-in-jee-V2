@@ -20,7 +20,7 @@ public class TransactionManager {
                 return result;
             } catch (Exception ew) {
                 tx.rollback();
-                throw new PersistenceException("erorr in persistence");
+                throw new PersistenceException(ew.getMessage());
             } finally {
                 em.close();
             }
@@ -36,7 +36,7 @@ public class TransactionManager {
                 tx.commit();
             } catch (Exception e) {
                 tx.rollback();
-                throw new PersistenceException("error in persistence");
+                throw new PersistenceException(e.getMessage());
             } finally {
                 em.close();
             }
