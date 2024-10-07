@@ -94,11 +94,12 @@ public class CreateRequestServlet extends HttpServlet {
                     sessionData.get("cin"),
                     LocalDate.parse(sessionData.get("dateOfBirth")),
                     LocalDate.parse(sessionData.get("employmentStartDate")),
-                    new Price(Double.parseDouble(sessionData.get("monthlyIncome")), Currency.getInstance("MAD")),
+                    Double.parseDouble(sessionData.get("monthlyIncome")),
                     Boolean.parseBoolean(sessionData.get("hasExistingLoans"))
             );
 
             RequestResponse requestResponse = service.create(requestRequest);
+            System.out.println(requestResponse);
 
             req.getSession().invalidate();
 
@@ -110,7 +111,7 @@ public class CreateRequestServlet extends HttpServlet {
         }
 
         req.getSession().invalidate();
-        res.sendRedirect("requests/all");
+//        res.sendRedirect("requests/all");
     }
 
     private Map<String, String> getDataFromSession(HttpServletRequest req) {

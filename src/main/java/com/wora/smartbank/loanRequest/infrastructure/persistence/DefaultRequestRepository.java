@@ -53,17 +53,11 @@ public class DefaultRequestRepository implements RequestRepository {
         return TransactionManager.executeWithResult(emf, saveOperation(request));
     }
 
-    private Function<EntityManager, Request> saveOperation(Request request) {
-        return em -> Optional.ofNullable(request.id())
-                .map(id -> update(em, request))
-                .orElseGet(() -> create(em, request));
-    }
-
     @Override
     public void delete(RequestId id) {
         logger.debug("Attempting to delete request with ID: {}", id.value());
         TransactionManager.executeWithoutResult(emf, em -> {
-            Request request = em.find(Request.class, id.value());
+            Request request = em.find(Request.class, id);
             if (request != null) {
                 em.remove(request);
                 logger.info("Request with ID {} deleted successfully", id.value());
@@ -78,10 +72,16 @@ public class DefaultRequestRepository implements RequestRepository {
     public boolean existsById(RequestId id) {
         logger.debug("Checking existence of request with ID: {}", id.value());
         boolean exists = TransactionManager.executeWithResult(emf, em ->
-                em.find(Request.class, id.value()) != null
+                em.find(Request.class, id) != null
         );
         logger.info("Request with ID {} {}", id.value(), exists ? "exists" : "does not exist");
         return exists;
+    }
+
+    private Function<EntityManager, Request> saveOperation(Request request) {
+        return em -> Optional.ofNullable(request.id())
+                .map(id -> update(em, request))
+                .orElseGet(() -> create(em, request));
     }
 
     private Request create(EntityManager em, Request request) {
