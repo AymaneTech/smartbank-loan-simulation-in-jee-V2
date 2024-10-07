@@ -86,6 +86,7 @@ public class DefaultRequestRepository implements RequestRepository {
 
     private Request create(EntityManager em, Request request) {
         logger.debug("Creating new request");
+        request.setId(new RequestId());
         em.persist(request);
         logger.info("New request created with ID: {}", request.id().value());
         return request;
