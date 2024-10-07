@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+}
+.container .credit-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
+}
+.container .credit-container .process {
+    background: #fff;
+    padding: 0 12px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+.steps {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+.steps .step {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    background-color: #9B9B9B;
+    color: white;
+    font-weight: 600;
+}
+.steps .step.active {
+    background-color: #FDDF35;
+    color: #000;
+}
+
+.form {
+    padding: 0 32px;
+}
+.form .form-group {
+    margin-bottom: 15px;
+}
+.form .form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form .form-group select,
+.form .form-group input[type=number] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+}
+.form .form-group input[type=number]::-webkit-inner-spin-button,
+.form .form-group input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+.form .form-group input[type=number] {
+    -moz-appearance: textfield;
+    margin: 0;
+    width: 90px !important;
+    color: #2CBCC7;
+    font-weight: 800;
+    font-size: 24px;
+}
+.form .form-group .slider {
+    width: 100%;
+}
+
+.submit-btn-parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.submit-btn-parent .submit-btn {
+    background-color: #2CBCC7;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 32px 0;
+}
+
+.recap {
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: #000;
+    height: 1px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    background: #007bff;
+    cursor: pointer;
+}
+
+input[type=range]::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    background: #007bff;
+    cursor: pointer;
+}
+
+input[type=range]::-ms-thumb {
+    height: 16px;
+    width: 16px;
+    background: #007bff;
+    cursor: pointer;
+}
+
+/*# sourceMappingURL=index.css.map */
