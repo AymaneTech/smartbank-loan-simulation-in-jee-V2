@@ -1,11 +1,16 @@
 package com.wora.smartbank.loanRequest.application.service;
 
+import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
 import com.wora.smartbank.loanRequest.application.service.impl.DefaultRequestService;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
 import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
-import com.wora.smartbank.loanRequest.domain.valueObject.*;
+import com.wora.smartbank.loanRequest.domain.valueObject.Cin;
+import com.wora.smartbank.loanRequest.domain.valueObject.CustomerDetails;
+import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
+import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
+import com.wora.smartbank.loanRequest.infrastructure.seeder.RequestSeeder;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,19 +20,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DefaultRequestServiceTest {
-
-    private static int requestCount = 0;
 
     @Mock
     private RequestRepository repository;
@@ -48,16 +51,16 @@ public class DefaultRequestServiceTest {
     @DisplayName("findAll - should return all request responses")
     void findAll_ShouldReturnAllRequests() {
         List<Request> requests = List.of(
-                getRequest(),
-                getRequest()
+                RequestSeeder.getRequest(),
+                RequestSeeder.getRequest()
         );
 
         when(repository.findAll()).thenReturn(requests);
 
         when(mapper.map(requests.get(0), RequestResponse.class))
-                .thenReturn(getMappingResult(requests.get(0)));
+                .thenReturn(mapEntityToResponseDto(requests.get(0)));
         when(mapper.map(requests.get(1), RequestResponse.class))
-                .thenReturn(getMappingResult(requests.get(1)));
+                .thenReturn(mapEntityToResponseDto(requests.get(1)));
 
         List<RequestResponse> actual = sut.findAll();
 
@@ -69,10 +72,10 @@ public class DefaultRequestServiceTest {
     @Test
     @DisplayName("findById - given valid id - should return request response ")
     void findById_GivenValidId_ShouldReturnRequestResponse() {
-        Request expected = getRequest();
+        Request expected = RequestSeeder.getRequest();
 
         when(repository.findById(expected.id())).thenReturn(Optional.of(expected));
-        when(mapper.map(expected, RequestResponse.class)).thenReturn(getMappingResult(expected));
+        when(mapper.map(expected, RequestResponse.class)).thenReturn(mapEntityToResponseDto(expected));
 
         RequestResponse actual = sut.findById(expected.id());
 
@@ -89,22 +92,31 @@ public class DefaultRequestServiceTest {
         assertThrows(RequestNotFoundException.class, () -> sut.findById(invalidId));
     }
 
+    @Test
+    @DisplayName("create - given valid data - return created request response")
+    void create_GivenRequest_ShouldReturnRequestResponse() {
+        RequestRequest requestDto = RequestSeeder.getRequestRequest();
 
-    private Request getRequest() {
-        requestCount++;
-        return new Request(
-                new LoanDetails("project " + requestCount, 15000.00, 36.2, 450.00),
-                new CustomerDetails(
-                        Title.MR, "firstName " + requestCount, "lastName " + requestCount,
-                        "email " + requestCount + "@example.com",
-                        "123-456-7890", "Engineer",
-                        new Cin("ABC123456789"), LocalDate.of(1990, 5, 20), LocalDate.of(2015, 1, 10),
-                        5000.00, false
-                )
-        ).setId(new RequestId());
+        when(validator.validate(any(RequestRequest.class)))
+                .thenReturn(Collections.emptySet());
+
+        when(calculationValidationService.calculate(any(LoanDetails.class)))
+                .thenReturn(new LoanDetails(requestDto.project(), requestDto.amount(), requestDto.duration(), requestDto.monthly()));
+
+        Request request = mapDtoToEntity(requestDto);
+        when(repository.save(any(Request.class)))
+                .thenReturn(request);
+
+        when(mapper.map(any(Request.class), eq(RequestResponse.class)))
+                .thenReturn(mapEntityToResponseDto(request));
+
+        RequestResponse actual = sut.create(requestDto);
+
+        assertEquals(requestDto.project(), actual.project());
+        assertNotNull(request);
     }
 
-    private RequestResponse getMappingResult(Request request) {
+    private RequestResponse mapEntityToResponseDto(Request request) {
         return new RequestResponse(
                 request.id(),
                 request.loanDetails().project(),
@@ -123,5 +135,12 @@ public class DefaultRequestServiceTest {
                 request.customerDetails().monthlyIncome(),
                 request.customerDetails().hasExistingLoans()
         );
+    }
+
+    private Request mapDtoToEntity(RequestRequest request) {
+        return new Request(new LoanDetails(request.project(), request.amount(), request.duration(), request.monthly()),
+                new CustomerDetails(request.title(), request.firstName(), request.lastName(), request.email(),
+                        request.phone(), request.profession(), new Cin(request.cin()), request.dateOfBirth(), request.employmentStartDate(),
+                        request.monthlyIncome(), request.hasExistingLoans()));
     }
 }
