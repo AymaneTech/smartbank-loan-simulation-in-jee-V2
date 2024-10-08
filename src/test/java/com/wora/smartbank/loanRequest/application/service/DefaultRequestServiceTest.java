@@ -6,8 +6,6 @@ import com.wora.smartbank.loanRequest.application.service.impl.DefaultRequestSer
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
 import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
-import com.wora.smartbank.loanRequest.domain.valueObject.Cin;
-import com.wora.smartbank.loanRequest.domain.valueObject.CustomerDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
 import com.wora.smartbank.loanRequest.infrastructure.seeder.RequestSeeder;
@@ -27,53 +25,88 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Default Request Service Test")
 public class DefaultRequestServiceTest {
 
-    @Mock private RequestRepository repository;
-    @Mock private Validator validator;
-    @Mock private ModelMapper mapper;
-    @Mock private LoanCalculationValidationService calculationValidationService;
+    @Mock
+    private RequestRepository repository;
+    @Mock
+    private Validator validator;
+    @Mock
+    private ModelMapper mapper;
+    @Mock
+    private LoanCalculationValidationService calculationValidationService;
 
-    @InjectMocks private DefaultRequestService sut;
+    @InjectMocks
+    private DefaultRequestService sut;
 
     @Test
     @DisplayName("findAll() Should return all request responses when requests exist")
     void findAll_ShouldReturnAllRequestResponse_WhenRequestsExist() {
-        List<Request> requests = List.of(
-                RequestSeeder.getRequest(),
-                RequestSeeder.getRequest()
-        );
-
+        List<Request> requests = List.of(RequestSeeder.getRequest(), RequestSeeder.getRequest());
+        
         when(repository.findAll()).thenReturn(requests);
-
-        when(mapper.map(requests.get(0), RequestResponse.class))
-                .thenReturn(mapEntityToResponseDto(requests.get(0)));
-        when(mapper.map(requests.get(1), RequestResponse.class))
-                .thenReturn(mapEntityToResponseDto(requests.get(1)));
+        when(mapper.map(any(Request.class), eq(RequestResponse.class)))
+                .thenAnswer(invocation -> {
+                    Request req = invocation.getArgument(0);
+                    return new RequestResponse(
+                            req.id(),
+                            req.loanDetails().project(),
+                            req.loanDetails().amount(),
+                            req.loanDetails().duration(),
+                            req.loanDetails().monthly(),
+                            req.customerDetails().title(),
+                            req.customerDetails().firstName(),
+                            req.customerDetails().lastName(),
+                            req.customerDetails().email(),
+                            req.customerDetails().phone(),
+                            req.customerDetails().profession(),
+                            req.customerDetails().cin().value(),
+                            req.customerDetails().dateOfBirth(),
+                            req.customerDetails().employmentStartDate(),
+                            req.customerDetails().monthlyIncome(),
+                            req.customerDetails().hasExistingLoans());
+                });
 
         List<RequestResponse> actual = sut.findAll();
 
         assertEquals(2, actual.size());
-        assertEquals(requests.get(0).loanDetails().project(), actual.get(0).project());
-        assertEquals(requests.get(1).loanDetails().project(), actual.get(1).project());
+        verify(repository).findAll();
+        verify(mapper, times(2)).map(any(Request.class), eq(RequestResponse.class));
     }
 
     @Test
     @DisplayName("findById() Should return request response when given valid ID")
     void findById_ShouldReturnRequestResponse_WhenGivenValidId() {
         Request expected = RequestSeeder.getRequest();
-
         when(repository.findById(expected.id())).thenReturn(Optional.of(expected));
-        when(mapper.map(expected, RequestResponse.class)).thenReturn(mapEntityToResponseDto(expected));
+        when(mapper.map(expected, RequestResponse.class)).thenReturn(new RequestResponse(
+                expected.id(),
+                expected.loanDetails().project(),
+                expected.loanDetails().amount(),
+                expected.loanDetails().duration(),
+                expected.loanDetails().monthly(),
+                expected.customerDetails().title(),
+                expected.customerDetails().firstName(),
+                expected.customerDetails().lastName(),
+                expected.customerDetails().email(),
+                expected.customerDetails().phone(),
+                expected.customerDetails().profession(),
+                expected.customerDetails().cin().value(),
+                expected.customerDetails().dateOfBirth(),
+                expected.customerDetails().employmentStartDate(),
+                expected.customerDetails().monthlyIncome(),
+                expected.customerDetails().hasExistingLoans()));
 
         RequestResponse actual = sut.findById(expected.id());
 
+        assertNotNull(actual);
         assertEquals(expected.id(), actual.id());
-        assertEquals(expected.loanDetails().project(), actual.project());
+        verify(repository).findById(expected.id());
+        verify(mapper).map(expected, RequestResponse.class);
     }
 
     @Test
@@ -83,57 +116,50 @@ public class DefaultRequestServiceTest {
         when(repository.findById(any(RequestId.class))).thenReturn(Optional.empty());
 
         assertThrows(RequestNotFoundException.class, () -> sut.findById(invalidId));
+        verify(repository).findById(invalidId);
     }
 
     @Test
     @DisplayName("create() Should return create request response when given valid data")
-    void create_ShouldReturnCreatedRequestResponse_WhenGivenValidRequest() {
+    void create_GivenRequest_ShouldReturnRequestResponse() {
         RequestRequest requestDto = RequestSeeder.getRequestRequest();
+        Request mappedRequest = RequestSeeder.getRequest();
+        Request savedRequest = RequestSeeder.getRequest();
+        RequestResponse expectedResponse = new RequestResponse(
+                savedRequest.id(),
+                savedRequest.loanDetails().project(),
+                savedRequest.loanDetails().amount(),
+                savedRequest.loanDetails().duration(),
+                savedRequest.loanDetails().monthly(),
+                savedRequest.customerDetails().title(),
+                savedRequest.customerDetails().firstName(),
+                savedRequest.customerDetails().lastName(),
+                savedRequest.customerDetails().email(),
+                savedRequest.customerDetails().phone(),
+                savedRequest.customerDetails().profession(),
+                savedRequest.customerDetails().cin().value(),
+                savedRequest.customerDetails().dateOfBirth(),
+                savedRequest.customerDetails().employmentStartDate(),
+                savedRequest.customerDetails().monthlyIncome(),
+                savedRequest.customerDetails().hasExistingLoans());
 
-        when(validator.validate(any(RequestRequest.class)))
-                .thenReturn(Collections.emptySet());
-
+        when(validator.validate(any(RequestRequest.class))).thenReturn(Collections.emptySet());
         when(calculationValidationService.calculate(any(LoanDetails.class)))
-                .thenReturn(new LoanDetails(requestDto.project(), requestDto.amount(), requestDto.duration(), requestDto.monthly()));
-
-        Request request = mapDtoToEntity(requestDto);
-        when(repository.save(any(Request.class)))
-                .thenReturn(request);
-
-        when(mapper.map(any(Request.class), eq(RequestResponse.class)))
-                .thenReturn(mapEntityToResponseDto(request));
+                .thenReturn(mappedRequest.loanDetails());
+        when(mapper.map(requestDto, Request.class)).thenReturn(mappedRequest);
+        when(repository.save(any(Request.class))).thenReturn(savedRequest);
+        when(mapper.map(savedRequest, RequestResponse.class)).thenReturn(expectedResponse);
 
         RequestResponse actual = sut.create(requestDto);
 
-        assertEquals(requestDto.project(), actual.project());
-        assertNotNull(request);
-    }
+        assertNotNull(actual);
+        assertEquals(expectedResponse.id(), actual.id());
+        assertEquals(expectedResponse.project(), actual.project());
 
-    private RequestResponse mapEntityToResponseDto(Request request) {
-        return new RequestResponse(
-                request.id(),
-                request.loanDetails().project(),
-                request.loanDetails().amount(),
-                request.loanDetails().duration(),
-                request.loanDetails().monthly(),
-                request.customerDetails().title(),
-                request.customerDetails().firstName(),
-                request.customerDetails().lastName(),
-                request.customerDetails().email(),
-                request.customerDetails().phone(),
-                request.customerDetails().profession(),
-                request.customerDetails().cin().value(),
-                request.customerDetails().dateOfBirth(),
-                request.customerDetails().employmentStartDate(),
-                request.customerDetails().monthlyIncome(),
-                request.customerDetails().hasExistingLoans()
-        );
-    }
-
-    private Request mapDtoToEntity(RequestRequest request) {
-        return new Request(new LoanDetails(request.project(), request.amount(), request.duration(), request.monthly()),
-                new CustomerDetails(request.title(), request.firstName(), request.lastName(), request.email(),
-                        request.phone(), request.profession(), new Cin(request.cin()), request.dateOfBirth(), request.employmentStartDate(),
-                        request.monthlyIncome(), request.hasExistingLoans()));
+        verify(validator).validate(requestDto);
+        verify(calculationValidationService).calculate(any(LoanDetails.class));
+        verify(mapper).map(requestDto, Request.class);
+        verify(repository).save(any(Request.class));
+        verify(mapper).map(savedRequest, RequestResponse.class);
     }
 }

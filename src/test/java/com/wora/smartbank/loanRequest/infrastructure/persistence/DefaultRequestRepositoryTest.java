@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@DisplayName("Default Request repository test ")
 class DefaultRequestRepositoryTest {
 
     private EntityManagerFactory emf;
