@@ -30,26 +30,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Default Request Service Test")
 public class DefaultRequestServiceTest {
 
-    @Mock
-    private RequestRepository repository;
+    @Mock private RequestRepository repository;
+    @Mock private Validator validator;
+    @Mock private ModelMapper mapper;
+    @Mock private LoanCalculationValidationService calculationValidationService;
 
-    @Mock
-    private Validator validator;
-
-    @Mock
-    private ModelMapper mapper;
-
-    @Mock
-    private LoanCalculationValidationService calculationValidationService;
-
-    @InjectMocks
-    private DefaultRequestService sut;
+    @InjectMocks private DefaultRequestService sut;
 
     @Test
-    @DisplayName("findAll - should return all request responses")
-    void findAll_ShouldReturnAllRequests() {
+    @DisplayName("findAll() Should return all request responses when requests exist")
+    void findAll_ShouldReturnAllRequestResponse_WhenRequestsExist() {
         List<Request> requests = List.of(
                 RequestSeeder.getRequest(),
                 RequestSeeder.getRequest()
@@ -70,8 +63,8 @@ public class DefaultRequestServiceTest {
     }
 
     @Test
-    @DisplayName("findById - given valid id - should return request response ")
-    void findById_GivenValidId_ShouldReturnRequestResponse() {
+    @DisplayName("findById() Should return request response when given valid ID")
+    void findById_ShouldReturnRequestResponse_WhenGivenValidId() {
         Request expected = RequestSeeder.getRequest();
 
         when(repository.findById(expected.id())).thenReturn(Optional.of(expected));
@@ -84,8 +77,8 @@ public class DefaultRequestServiceTest {
     }
 
     @Test
-    @DisplayName("findById - given invalid id - should throw requestNotFoundException")
-    void findById_GivenInvalidId_ShouldThrowRequestNoFoundException() {
+    @DisplayName("findById() Should throw RequestNotFoundException when given invalid ID")
+    void findById_ShouldThrowRequestNotFoundException_WhenGivenInvalidId() {
         RequestId invalidId = new RequestId();
         when(repository.findById(any(RequestId.class))).thenReturn(Optional.empty());
 
@@ -93,8 +86,8 @@ public class DefaultRequestServiceTest {
     }
 
     @Test
-    @DisplayName("create - given valid data - return created request response")
-    void create_GivenRequest_ShouldReturnRequestResponse() {
+    @DisplayName("create() Should return create request response when given valid data")
+    void create_ShouldReturnCreatedRequestResponse_WhenGivenValidRequest() {
         RequestRequest requestDto = RequestSeeder.getRequestRequest();
 
         when(validator.validate(any(RequestRequest.class)))
