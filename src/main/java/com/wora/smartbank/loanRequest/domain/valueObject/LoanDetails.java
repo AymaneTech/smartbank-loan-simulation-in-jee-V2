@@ -12,4 +12,7 @@ public record LoanDetails(
         @NotNull @Positive Double duration,
         @NotNull @Positive Double monthly
 ) {
+    public LoanDetails(LoanDetails loanDetails, Double monthly) {
+        this(loanDetails.project(), loanDetails.amount(), loanDetails.duration(), monthly);
+    }
 }

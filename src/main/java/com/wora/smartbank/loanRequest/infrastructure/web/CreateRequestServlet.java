@@ -1,6 +1,5 @@
 package com.wora.smartbank.loanRequest.infrastructure.web;
 
-import com.wora.smartbank.common.domain.valueObject.Price;
 import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

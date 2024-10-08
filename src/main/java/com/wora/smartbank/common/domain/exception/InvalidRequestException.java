@@ -5,9 +5,9 @@ import com.wora.smartbank.common.domain.valueObject.ValidationErrors;
 import java.util.Map;
 
 public class InvalidRequestException extends RuntimeException {
-    private final ValidationErrors validationErrors;
+    private final ValidationErrors<?> validationErrors;
 
-    public InvalidRequestException(ValidationErrors validationErrors) {
+    public InvalidRequestException(ValidationErrors<?> validationErrors) {
         super(validationErrors.message());
         this.validationErrors = validationErrors;
         validationErrors.errors().forEach((k, v) -> System.err.println(k + "  ->  " + v));
@@ -17,7 +17,7 @@ public class InvalidRequestException extends RuntimeException {
         return validationErrors.errors();
     }
 
-    public String message () {
+    public String message() {
         return validationErrors.message();
     }
 }
