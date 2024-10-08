@@ -18,7 +18,6 @@ import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @ApplicationScoped
@@ -53,18 +52,14 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public RequestResponse create(RequestRequest dto) {
-        validateRequest(dto);
-
-        final Request savedRequest = repository.save(mapper.map(dto, Request.class));
-        return mapper.map(savedRequest, RequestResponse.class);
+        return validateAndSave(dto);
     }
 
     @Override
     public RequestResponse update(RequestId id, RequestRequest dto) {
-        validateRequest(dto);
-        final Request updatedRequest = repository.save(mapper.map(dto, Request.class));
-        return mapper.map(updatedRequest, RequestResponse.class);
+        return validateAndSave(dto);
     }
+
 
     @Override
     public void delete(RequestId id) {
@@ -76,6 +71,17 @@ public class DefaultRequestService implements RequestService {
         return repository.existsById(id);
     }
 
+    private RequestResponse validateAndSave(RequestRequest dto) {
+        validateRequest(dto);
+
+        final LoanDetails loanDetails = calculationValidationService.calculate(new LoanDetails(dto.project(), dto.amount(), dto.duration(), dto.monthly()));
+        final Request mappedRequest = mapper.map(dto, Request.class);
+        mappedRequest.setLoanDetails(loanDetails);
+
+        final Request updatedRequest = repository.save(mappedRequest);
+        return mapper.map(updatedRequest, RequestResponse.class);
+    }
+
     private void validateRequest(RequestRequest dto) {
         Set<ConstraintViolation<RequestRequest>> constraintViolations = validator.validate(dto);
 
@@ -83,10 +89,5 @@ public class DefaultRequestService implements RequestService {
             ValidationErrors<RequestRequest> validationErrors = new ValidationErrors<>("validation error in request creation", constraintViolations);
             throw new InvalidRequestException(validationErrors);
         }
-
-//        if (!calculationValidationService.validate(new LoanDetails(dto.project(), dto.amount(), dto.duration(), dto.monthly()))) {
-//            ValidationErrors<RequestRequest> validationErrors = new ValidationErrors<>("loan calculation errors", Map.of("calculation", "loan calculation error"));
-//            throw new InvalidRequestException(validationErrors);
-//        }
     }
 }
