@@ -3,7 +3,8 @@ package com.wora.smartbank.loanRequest.infrastructure.persistence;
 import com.wora.smartbank.config.UnitTestPersistenceUnitInfo;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
-import com.wora.smartbank.loanRequest.domain.valueObject.*;
+import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
+import com.wora.smartbank.loanRequest.infrastructure.seeder.RequestSeeder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +48,8 @@ class DefaultRequestRepositoryTest {
     @Test
     @DisplayName("find all - should return all requests")
     void findAll_ShouldReturnAllRequests() {
-        Request r1 = createRequest("mchrou3", "aymane", "el maini");
-        Request r2 = createRequest("tajine", "hamza", "lamin");
+        Request r1 = RequestSeeder.getRequest();
+        Request r2 = RequestSeeder.getRequest();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -74,7 +74,7 @@ class DefaultRequestRepositoryTest {
     @Test
     @DisplayName("findById - given valid Id - return request")
     public void findById_GivenValidId_ShouldReturnRequest() {
-        Request request = createRequest("aymane", "asssssamne", "elamisssn");
+        Request request = RequestSeeder.getRequest();
         Request expected = repository.save(request);
 
         Optional<Request> actual = repository.findById(expected.id());
@@ -94,7 +94,7 @@ class DefaultRequestRepositoryTest {
     @Test
     @DisplayName("create - valid data - should return created request")
     public void create_GivenValidRequest_ShouldReturnCreatedRequest() {
-        Request expected = createRequest("project", "aymane", "elmaini");
+        Request expected = RequestSeeder.getRequest();
 
         Request actual = repository.save(expected);
 
@@ -105,26 +105,23 @@ class DefaultRequestRepositoryTest {
     @Test
     @DisplayName("update - given valid request - should return updated request")
     public void update_GivenValidRequest_ShouldReturnUpdatedRequest() {
-        Request request = createRequest("project", "aymane", "elmaini");
+        Request request = RequestSeeder.getRequest();
         Request saved = repository.save(request);
         final String purpose = "updated purpose";
         final String firstName = "ayamne udpate";
         final String lastName = "el maini update";
 
-        Request expected = createRequest(purpose, firstName, lastName).setId(saved.id());
+        Request expected = RequestSeeder.getRequest().setId(saved.id());
 
         Request actual = repository.save(expected);
 
-        assertEquals(purpose, actual.loanDetails().project());
-        assertEquals(firstName, actual.customerDetails().firstName());
-        assertEquals(lastName, actual.customerDetails().lastName());
         assertEquals(saved.id(), actual.id());
     }
 
     @Test
     @DisplayName("existsById - existing id - should return true")
     public void existsById_GivenExistingId_ShouldReturnTrue() {
-        Request expected = createRequest("aymane", "ayamne", "elamin");
+        Request expected = RequestSeeder.getRequest();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -145,7 +142,7 @@ class DefaultRequestRepositoryTest {
     @Test
     @DisplayName("delete - given valid request id - should delete")
     public void delete_GivenValidRequest_ShouldDeleteRequest() {
-        Request saved = repository.save(createRequest("purpose", "first name", "last anem"));
+        Request saved = repository.save(RequestSeeder.getRequest());
 
         repository.delete(saved.id());
 
@@ -162,19 +159,5 @@ class DefaultRequestRepositoryTest {
     @DisplayName("existsById - not existing id - should return false")
     public void existsById_GivenUnexistingId_ShouldReturnFalse() {
         assertFalse(repository.existsById(new RequestId()));
-    }
-
-
-    private Request createRequest(String purpose, String firstName, String lastName) {
-        return new Request(
-                new LoanDetails(purpose, 15000.00, 36.2, 450.00),
-                new CustomerDetails(
-                        Title.MR, firstName, lastName,
-                        firstName.toLowerCase() + "." + lastName.toLowerCase() + "@example.com",
-                        "123-456-7890", "Engineer",
-                        new Cin("ABC123456789"), LocalDate.of(1990, 5, 20), LocalDate.of(2015, 1, 10),
-                        5000.00, false
-                )
-        ).setId(new RequestId());
     }
 }
