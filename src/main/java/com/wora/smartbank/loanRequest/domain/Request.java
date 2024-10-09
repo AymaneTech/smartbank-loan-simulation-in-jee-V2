@@ -1,12 +1,14 @@
 package com.wora.smartbank.loanRequest.domain;
 
 import com.wora.smartbank.common.domain.valueObject.Timestamp;
+import com.wora.smartbank.loanRequest.domain.entity.RequestStatus;
 import com.wora.smartbank.loanRequest.domain.valueObject.CustomerDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "requests")
@@ -21,6 +23,9 @@ public class Request implements Serializable {
 
     @Embedded
     private CustomerDetails customerDetails;
+
+    @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.DETACH})
+    private List<RequestStatus> requestStatuses;
 
     @Embedded
     private Timestamp timestamp;
@@ -69,12 +74,22 @@ public class Request implements Serializable {
         return this;
     }
 
+    public List<RequestStatus> requestStatuses() {
+        return requestStatuses;
+    }
+
+    public Request setRequestStatuses(List<RequestStatus> requestStatuses) {
+        this.requestStatuses = requestStatuses;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Request{" +
                 "id=" + id +
                 ", loanDetails=" + loanDetails +
                 ", customerDetails=" + customerDetails +
+                ", request status= " + requestStatuses +
                 '}';
     }
 }
