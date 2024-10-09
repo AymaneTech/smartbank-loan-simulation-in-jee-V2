@@ -63,7 +63,7 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public void delete(RequestId id) {
-        repository.delete(id);
+        repository.deleteById(id);
     }
 
     @Override

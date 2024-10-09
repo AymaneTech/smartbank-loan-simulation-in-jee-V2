@@ -1,6 +1,5 @@
 package com.wora.smartbank.loanRequest.application.service;
 
-import com.wora.smartbank.common.domain.exception.InvalidRequestException;
 import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
 import com.wora.smartbank.loanRequest.application.service.impl.DefaultRequestService;
@@ -10,8 +9,6 @@ import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
 import com.wora.smartbank.loanRequest.infrastructure.seeder.RequestSeeder;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Path;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +19,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
