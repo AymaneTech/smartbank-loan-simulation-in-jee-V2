@@ -1,4 +1,4 @@
-package com.wora.smartbank.common.util;
+package com.wora.smartbank.orm.internal.util;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

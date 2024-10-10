@@ -1,8 +1,8 @@
 package com.wora.smartbank.orm.internal;
 
-import com.wora.smartbank.common.util.TransactionManager;
 import com.wora.smartbank.orm.api.JpaRepository;
 import com.wora.smartbank.orm.api.annotation.JPA;
+import com.wora.smartbank.orm.internal.util.TransactionManager;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManagerFactory;
