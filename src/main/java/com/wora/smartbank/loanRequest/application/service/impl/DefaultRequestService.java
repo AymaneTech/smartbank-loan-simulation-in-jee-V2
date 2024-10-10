@@ -8,9 +8,10 @@ import com.wora.smartbank.loanRequest.application.service.LoanCalculationValidat
 import com.wora.smartbank.loanRequest.application.service.RequestService;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
-import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
+import com.wora.smartbank.orm.api.JpaRepository;
+import com.wora.smartbank.orm.api.annotation.JPA;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -23,13 +24,13 @@ import java.util.Set;
 @ApplicationScoped
 public class DefaultRequestService implements RequestService {
 
-    private final RequestRepository repository;
+    private final JpaRepository<Request, RequestId> repository;
     private final ModelMapper mapper;
     private final Validator validator;
     private final LoanCalculationValidationService calculationValidationService;
 
     @Inject
-    public DefaultRequestService(RequestRepository repository, ModelMapper mapper, Validator validator, LoanCalculationValidationService calculationValidationService) {
+    public DefaultRequestService(@JPA JpaRepository<Request, RequestId> repository, ModelMapper mapper, Validator validator, LoanCalculationValidationService calculationValidationService) {
         this.repository = repository;
         this.mapper = mapper;
         this.validator = validator;
@@ -52,14 +53,18 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public RequestResponse create(RequestRequest dto) {
-        return validateAndSave(dto);
+        final Request request = validateAndCalculation(dto);
+        request.setId(new RequestId());
+        final Request savedRequest = repository.save(request);
+        return mapper.map(savedRequest, RequestResponse.class);
     }
 
     @Override
     public RequestResponse update(RequestId id, RequestRequest dto) {
-        return validateAndSave(dto);
+        Request request = validateAndCalculation(dto);
+        final Request savedRequest = repository.update(request);
+        return mapper.map(savedRequest, RequestResponse.class);
     }
-
 
     @Override
     public void delete(RequestId id) {
@@ -71,15 +76,13 @@ public class DefaultRequestService implements RequestService {
         return repository.existsById(id);
     }
 
-    private RequestResponse validateAndSave(RequestRequest dto) {
+    private Request validateAndCalculation(RequestRequest dto) {
         validateRequest(dto);
 
         final LoanDetails loanDetails = calculationValidationService.calculate(new LoanDetails(dto.project(), dto.amount(), dto.duration(), dto.monthly()));
         final Request mappedRequest = mapper.map(dto, Request.class);
         mappedRequest.setLoanDetails(loanDetails);
-
-        final Request updatedRequest = repository.save(mappedRequest);
-        return mapper.map(updatedRequest, RequestResponse.class);
+        return mappedRequest;
     }
 
     private void validateRequest(RequestRequest dto) {
