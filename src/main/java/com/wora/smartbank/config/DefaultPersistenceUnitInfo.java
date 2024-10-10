@@ -64,7 +64,9 @@ public class DefaultPersistenceUnitInfo implements PersistenceUnitInfo {
     @Override
     public List<String> getManagedClassNames() {
         return List.of(
-                "com.wora.smartbank.loanRequest.domain.Request"
+                "com.wora.smartbank.loanRequest.domain.Request",
+                "com.wora.smartbank.loanRequest.domain.entity.RequestStatus",
+                "com.wora.smartbank.loanRequest.domain.entity.Status"
         );
     }
 
@@ -95,7 +97,8 @@ public class DefaultPersistenceUnitInfo implements PersistenceUnitInfo {
     }
 
     @Override
-    public String getPersistenceXMLSchemaVersion() { return "";
+    public String getPersistenceXMLSchemaVersion() {
+        return "";
     }
 
     @Override
