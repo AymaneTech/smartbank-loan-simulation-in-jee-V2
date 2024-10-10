@@ -2,6 +2,8 @@ package com.wora.smartbank.orm.internal;
 
 import com.wora.smartbank.common.util.TransactionManager;
 import com.wora.smartbank.orm.api.JpaRepository;
+import com.wora.smartbank.orm.api.annotation.JPA;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Table;
@@ -11,30 +13,29 @@ import jakarta.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-
-public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
+@Dependent
+@JPA
+public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJpaRepository.class);
-    private final Class<T> entityClass;
-    private final EntityDetails entityDetails;
+
+    private Class<T> entityClass;
+    private Class<ID> idClass;
+    private EntityDetails entityDetails;
+
     @Inject
     private EntityManagerFactory emf;
 
-    protected DefaultJpaRepository() {
-        this.entityClass = getEntityClass();
-        this.entityDetails = getEntityDetails();
+    public DefaultJpaRepository() {
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<T> getEntityClass() {
-        ParameterizedType genericsSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-        return (Class<T>) genericsSuperclass.getActualTypeArguments()[0];
+    public DefaultJpaRepository(Class<T> entityClass, Class<ID> idClass) {
+        System.out.println("instantiated");
+        this.entityClass = entityClass;
+        this.idClass = idClass;
+        this.entityDetails = getEntityDetails();
     }
 
     @Override
@@ -42,6 +43,11 @@ public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID
         log.info("Saving entity to database");
         TransactionManager.executeWithoutResult(emf, em -> em.persist(entity));
         return entity;
+    }
+
+    public T update(T entity) {
+        log.info("updating entity ");
+        return TransactionManager.executeWithResult(emf, em -> em.merge(entity));
     }
 
     @Override
@@ -57,7 +63,6 @@ public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID
         log.info("Fetching from {} by id", entityDetails.tableName());
         return TransactionManager.executeWithResult(emf,
                 em -> Optional.ofNullable(em.find(entityClass, id)));
-
     }
 
     @Override
@@ -110,7 +115,7 @@ public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID
     public boolean exists(T entity) {
         log.info("Checking if {} exists}", entityDetails.tableName());
         return TransactionManager.executeWithResult(emf, em ->
-                em.contains(entity) || em.find(entityClass, resloveEntityId(entity)) != null
+                em.contains(entity) || em.find(entityClass, resolveEntityId(entity)) != null
         );
     }
 
@@ -143,7 +148,7 @@ public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID
 
 
     @SuppressWarnings("unchecked")
-    private ID resloveEntityId(T entity) {
+    private ID resolveEntityId(T entity) {
         try {
             return (ID) entityClass.getMethod("id")
                     .invoke(entity);
@@ -156,6 +161,17 @@ public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID
         return entityClass.isAnnotationPresent(Table.class)
                 ? entityClass.getAnnotation(Table.class).name()
                 : toSnakeCase(entityClass.getSimpleName());
+    }
+
+    private void createNewIdInstance(T entity) {
+        try {
+
+            ID id = idClass.getConstructor(UUID.class)
+                    .newInstance(UUID.randomUUID());
+            entityClass.getMethod("setId", id.getClass()).invoke(entity, id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to create new ID instance", e);
+        }
     }
 
     // todo: move this helper to some other place
