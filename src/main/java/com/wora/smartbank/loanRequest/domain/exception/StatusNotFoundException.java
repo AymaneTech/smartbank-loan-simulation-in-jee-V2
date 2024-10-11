@@ -9,4 +9,10 @@ public class StatusNotFoundException extends RuntimeException {
         super("status with id " + id.value() + " not found");
         this.id = id;
     }
+
+    public StatusNotFoundException(String columnName, Object value) {
+        super("status with " + columnName + value + "not found");
+        this.id = null;
+
+    }
 }

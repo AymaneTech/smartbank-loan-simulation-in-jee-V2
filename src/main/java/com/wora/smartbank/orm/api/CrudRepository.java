@@ -9,6 +9,8 @@ public interface CrudRepository<T, ID> {
 
     Optional<T> findById(ID ids);
 
+    <V> Optional<T> findByColumn(String columnName, V value);
+
     void delete(T entity);
 
     void deleteById(ID id);

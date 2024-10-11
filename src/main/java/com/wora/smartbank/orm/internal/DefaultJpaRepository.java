@@ -60,6 +60,23 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
                 em -> Optional.ofNullable(em.find(entityClass, id)));
     }
 
+    public <V> Optional<T> findByColumn(String columnName, V value) {
+        log.info("Fetching from {} by column {} ", entityDetails.tableName(), columnName);
+        return TransactionManager.executeWithResult(emf,
+                em -> {
+                    CriteriaBuilder cb = em.getCriteriaBuilder();
+                    CriteriaQuery<T> query = cb.createQuery(entityClass);
+                    Root<T> root = query.from(entityClass);
+                    if (value == null) {
+                        query.select(root).where(cb.isNull(root.get(columnName)));
+                    } else {
+                        query.select(root).where(cb.equal(root.get(columnName), value));
+                    }
+                    final T result = em.createQuery(query).getSingleResult();
+                    return Optional.ofNullable(result);
+                });
+    }
+
     @Override
     public List<T> findAllById(List<ID> ids) {
         log.info("fetching all entities by id");
