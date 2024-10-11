@@ -90,6 +90,7 @@
             <td><fmt:formatNumber value="${request.monthlyIncome()}" type="currency" currencySymbol="$"/></td>
             <td>${request.hasExistingLoans()}</td>
             <td><a href="${pageContext.request.contextPath}/requests/delete/${request.id().value()}">delete</a></td>
+            <td><a href="${pageContext.request.contextPath}/requests/update/${request.id().value()}">update</a></td>
         </tr>
     </c:forEach>
     </tbody>
