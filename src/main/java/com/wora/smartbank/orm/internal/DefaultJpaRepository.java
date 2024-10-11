@@ -96,7 +96,10 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
     @Override
     public void deleteById(ID id) {
         log.info("Deleting from {} by id", entityDetails.tableName());
-        TransactionManager.executeWithoutResult(emf, em -> findById(id).ifPresent(em::remove));
+        TransactionManager.executeWithoutResult(emf,
+                em -> findById(id)
+                        .ifPresent(entity -> em.remove(em.merge(entity)))
+        );
     }
 
     @Override
@@ -121,7 +124,8 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
             final CriteriaQuery<Long> query = cb.createQuery(Long.class);
             final Root<T> root = query.from(entityClass);
             query.select(cb.count(root)).where(cb.equal(root.get("id"), id));
-            return em.createQuery(query).getSingleResult() > 0;
+
+            return em.createQuery(query).getSingleResult() == 1;
         });
     }
 
