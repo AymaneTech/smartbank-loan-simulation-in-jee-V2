@@ -2,7 +2,6 @@ package com.wora.smartbank.loanRequest.domain;
 
 import com.wora.smartbank.common.domain.valueObject.Timestamp;
 import com.wora.smartbank.loanRequest.domain.entity.RequestStatus;
-import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.valueObject.CustomerDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
@@ -25,7 +24,7 @@ public class Request implements Serializable {
     @Embedded
     private CustomerDetails customerDetails;
 
-    @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.DETACH})
+    @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE})
     private List<RequestStatus> requestStatuses;
 
     @Embedded
@@ -84,9 +83,8 @@ public class Request implements Serializable {
         return this;
     }
 
-    public Request addStatus(Status status) {
-        new RequestStatus(status, this);
-        return this;
+    public void addRequestStatus(RequestStatus requestStatus) {
+        this.requestStatuses.add(requestStatus);
     }
 
     @Override
