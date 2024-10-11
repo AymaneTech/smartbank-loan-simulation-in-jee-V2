@@ -97,21 +97,18 @@ public class CreateRequestServlet extends HttpServlet {
             );
 
             RequestResponse requestResponse = service.create(requestRequest);
-            System.out.println(requestResponse);
+
 
             req.getSession().invalidate();
+            res.sendRedirect(req.getContextPath() + "/requests/all");
 
-            writer.println("Request submitted successfully!");
-            writer.println("here is the result " + requestResponse);
 
         } catch (Exception e) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to submit request: " + e.getMessage());
         }
-
-        req.getSession().invalidate();
-//        res.sendRedirect("requests/all");
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, String> getDataFromSession(HttpServletRequest req) {
         return Arrays.stream(STEPS)
                 .flatMap(step -> {

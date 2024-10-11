@@ -19,8 +19,10 @@ public class RequestsListServlet extends HttpServlet {
     private RequestService service;
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
         final List<RequestResponse> requests = service.findAll();
         req.setAttribute("requests", requests);
         req.getRequestDispatcher("/pages/requests/request-list.jsp").forward(req, res);
     }
 }
+

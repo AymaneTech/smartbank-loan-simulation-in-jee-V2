@@ -71,21 +71,23 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach var="request" items="${requests}" varStatus="status">
-        <tr class="${status.index % 2 == 0 ? '' : 'active-row'}">
-            <td>${request.project}</td>
-            <td><fmt:formatNumber value="${request.amount}" type="currency" currencySymbol="$"/></td>
-            <td>${request.duration}</td>
-            <td><fmt:formatNumber value="${request.monthly}" type="currency" currencySymbol="$"/></td>
-            <td>${request.title}</td>
-            <td>${request.firstName}</td>
-            <td>${request.lastName}</td>
-            <td>${request.email}</td>
-            <td>${request.phone}</td>
-            <td>${request.profession}</td>
-            <td>${request.cin}</td>
-            <td><fmt:formatNumber value="${request.monthlyIncome.amount}" type="currency" currencySymbol="$"/></td>
-            <td>${request.hasExistingLoans}</td>
+    <c:forEach var="request" items="${requests}">
+        <tr>
+            <td>${request.project()}</td>
+            <td><fmt:formatNumber value="${request.amount()}" type="currency" currencySymbol="$"/></td>
+            <td>${request.duration()}</td>
+            <td><fmt:formatNumber value="${request.monthly()}" type="currency" currencySymbol="$"/></td>
+            <td>${request.title()}</td>
+            <td>${request.firstName()}</td>
+            <td>${request.lastName()}</td>
+            <td>${request.email()}</td>
+            <td>${request.phone()}</td>
+            <td>${request.profession()}</td>
+            <td>${request.cin()}</td>
+            <td>${request.dateOfBirth()}</td>
+            <td>${request.employmentStartDate()}</td>
+            <td><fmt:formatNumber value="${request.monthlyIncome()}" type="currency" currencySymbol="$"/></td>
+            <td>${request.hasExistingLoans()}</td>
         </tr>
     </c:forEach>
     </tbody>
