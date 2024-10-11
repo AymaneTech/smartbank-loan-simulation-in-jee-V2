@@ -3,6 +3,7 @@ package com.wora.smartbank.loanRequest.domain.entity;
 import com.wora.smartbank.common.domain.valueObject.Timestamp;
 import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
@@ -13,7 +14,9 @@ public class Status {
     @EmbeddedId
     private StatusId id;
 
-    private String description;
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    private String name;
 
     @OneToMany(mappedBy = "status", cascade = {CascadeType.PERSIST, CascadeType.DETACH})
     private List<RequestStatus> requestStatuses;
@@ -25,13 +28,13 @@ public class Status {
 
     }
 
-    public Status(StatusId id, String description) {
+    public Status(StatusId id, String name) {
         this.id = id;
-        this.description = description;
+        this.name = name;
     }
 
-    public Status(String description) {
-        this.description = description;
+    public Status(String name) {
+        this.name = name;
     }
 
     public StatusId id() {
@@ -43,12 +46,12 @@ public class Status {
         return this;
     }
 
-    public String description() {
-        return description;
+    public String name() {
+        return name;
     }
 
-    public Status setDescription(String description) {
-        this.description = description;
+    public Status setName(String name) {
+        this.name = name;
         return this;
     }
 
