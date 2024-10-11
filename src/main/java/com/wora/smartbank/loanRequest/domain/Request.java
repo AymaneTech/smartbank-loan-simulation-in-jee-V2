@@ -2,6 +2,7 @@ package com.wora.smartbank.loanRequest.domain;
 
 import com.wora.smartbank.common.domain.valueObject.Timestamp;
 import com.wora.smartbank.loanRequest.domain.entity.RequestStatus;
+import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.valueObject.CustomerDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
@@ -80,6 +81,11 @@ public class Request implements Serializable {
 
     public Request setRequestStatuses(List<RequestStatus> requestStatuses) {
         this.requestStatuses = requestStatuses;
+        return this;
+    }
+
+    public Request addStatus(Status status) {
+        new RequestStatus(status, this);
         return this;
     }
 
