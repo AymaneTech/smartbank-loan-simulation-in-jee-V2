@@ -49,6 +49,13 @@ public class DefaultStatusService implements StatusService {
     }
 
     @Override
+    public <V> StatusResponse findByColumn(String columnName, V value) {
+        return repository.findByColumn(columnName, value)
+                .map(this::toResponseDto)
+                .orElseThrow(() -> new StatusNotFoundException(columnName, value));
+    }
+
+    @Override
     public StatusResponse create(StatusRequest dto) {
         validateRequest(dto);
         final Status status = mapper.map(dto, Status.class)

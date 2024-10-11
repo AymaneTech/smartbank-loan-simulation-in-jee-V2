@@ -6,10 +6,14 @@ import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
 import com.wora.smartbank.loanRequest.application.service.LoanCalculationValidationService;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
+import com.wora.smartbank.loanRequest.application.service.StatusService;
 import com.wora.smartbank.loanRequest.domain.Request;
+import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
+import com.wora.smartbank.loanRequest.domain.exception.StatusNotFoundException;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
+import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
 import com.wora.smartbank.orm.api.JpaRepository;
 import com.wora.smartbank.orm.api.annotation.JPA;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -25,13 +29,15 @@ import java.util.Set;
 public class DefaultRequestService implements RequestService {
 
     private final JpaRepository<Request, RequestId> repository;
+    private final JpaRepository<Status, StatusId> statusRepository;
     private final ModelMapper mapper;
     private final Validator validator;
     private final LoanCalculationValidationService calculationValidationService;
 
     @Inject
-    public DefaultRequestService(@JPA JpaRepository<Request, RequestId> repository, ModelMapper mapper, Validator validator, LoanCalculationValidationService calculationValidationService) {
+    public DefaultRequestService(@JPA JpaRepository<Request, RequestId> repository, JpaRepository<Status, StatusId> statusRepository, ModelMapper mapper, Validator validator, StatusService statusService, LoanCalculationValidationService calculationValidationService) {
         this.repository = repository;
+        this.statusRepository = statusRepository;
         this.mapper = mapper;
         this.validator = validator;
         this.calculationValidationService = calculationValidationService;
@@ -54,8 +60,12 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public RequestResponse create(RequestRequest dto) {
+        Status status = statusRepository.findByColumn("name", "PENDING")
+                .orElseThrow(() -> new StatusNotFoundException("name", "PENDING"));
+
         final Request request = validateAndCalculation(dto)
-                .setId(new RequestId());
+                .setId(new RequestId())
+                .addStatus(status);
         final Request savedRequest = repository.save(request);
         return mapper.map(savedRequest, RequestResponse.class);
     }

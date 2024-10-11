@@ -18,6 +18,8 @@ public interface StatusService {
 
     StatusResponse findById(StatusId statusId);
 
+    <V> StatusResponse findByColumn(String columnName, V value);
+
     void delete(StatusId id);
 
     long count();
