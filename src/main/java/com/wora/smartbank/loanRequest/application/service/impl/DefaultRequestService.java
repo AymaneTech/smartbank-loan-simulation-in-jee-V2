@@ -39,7 +39,8 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public List<RequestResponse> findAll() {
-        return repository.findAll().stream()
+        return repository.findAll()
+                .stream()
                 .map(r -> mapper.map(r, RequestResponse.class))
                 .toList();
     }
@@ -53,21 +54,24 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public RequestResponse create(RequestRequest dto) {
-        final Request request = validateAndCalculation(dto);
-        request.setId(new RequestId());
+        final Request request = validateAndCalculation(dto)
+                .setId(new RequestId());
         final Request savedRequest = repository.save(request);
         return mapper.map(savedRequest, RequestResponse.class);
     }
 
     @Override
     public RequestResponse update(RequestId id, RequestRequest dto) {
-        Request request = validateAndCalculation(dto);
+        Request request = validateAndCalculation(dto)
+                .setId(id);
         final Request savedRequest = repository.update(request);
         return mapper.map(savedRequest, RequestResponse.class);
     }
 
     @Override
     public void delete(RequestId id) {
+        if (repository.existsById(id))
+            throw new RequestNotFoundException(id);
         repository.deleteById(id);
     }
 
