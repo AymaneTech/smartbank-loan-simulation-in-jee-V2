@@ -70,7 +70,7 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public void delete(RequestId id) {
-        if (repository.existsById(id))
+        if (!repository.existsById(id))
             throw new RequestNotFoundException(id);
         repository.deleteById(id);
     }

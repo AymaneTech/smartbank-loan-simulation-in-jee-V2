@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Map;
@@ -74,7 +73,6 @@ public class CreateRequestServlet extends HttpServlet {
     }
 
     private void submitRequest(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        PrintWriter writer = res.getWriter();
         final Map<String, String> sessionData = getDataFromSession(req);
 
         try {

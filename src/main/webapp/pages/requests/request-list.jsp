@@ -68,6 +68,7 @@
         <th>Employment Start Date</th>
         <th>Monthly Income</th>
         <th>Has Existing Loans</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -88,6 +89,7 @@
             <td>${request.employmentStartDate()}</td>
             <td><fmt:formatNumber value="${request.monthlyIncome()}" type="currency" currencySymbol="$"/></td>
             <td>${request.hasExistingLoans()}</td>
+            <td><a href="${pageContext.request.contextPath}/requests/delete/${request.id().value()}">delete</a></td>
         </tr>
     </c:forEach>
     </tbody>
