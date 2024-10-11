@@ -10,7 +10,7 @@ import jakarta.servlet.annotation.WebListener;
 import java.util.List;
 
 @WebListener
-public class RequestListener implements ServletContextListener {
+public class StartupListener implements ServletContextListener {
 
     @Inject
     private StatusService service;
