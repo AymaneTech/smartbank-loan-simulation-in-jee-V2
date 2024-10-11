@@ -10,6 +10,8 @@ public interface StatusService {
 
     StatusResponse create(StatusRequest dto);
 
+    List<StatusResponse> createAll(List<StatusRequest> dto);
+
     StatusResponse update(StatusId id, StatusRequest dto);
 
     List<StatusResponse> findAll();
@@ -17,4 +19,6 @@ public interface StatusService {
     StatusResponse findById(StatusId statusId);
 
     void delete(StatusId id);
+
+    long count();
 }
