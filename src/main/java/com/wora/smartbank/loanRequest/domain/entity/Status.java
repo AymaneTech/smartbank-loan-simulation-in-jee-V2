@@ -12,6 +12,7 @@ import java.util.List;
 public class Status {
 
     @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id", nullable = false))
     private StatusId id;
 
     @NotBlank
