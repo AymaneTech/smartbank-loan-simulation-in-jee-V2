@@ -1,6 +1,5 @@
 package com.wora.smartbank.loanRequest.application.dto;
 
-import com.wora.smartbank.common.domain.valueObject.Price;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
 import com.wora.smartbank.loanRequest.domain.valueObject.Title;
 
