@@ -58,6 +58,19 @@ public class DefaultStatusService implements StatusService {
     }
 
     @Override
+    public List<StatusResponse> createAll(List<StatusRequest> dtos) {
+        dtos.forEach(this::validateRequest);
+        List<Status> statuesList = dtos
+                .stream().map(dto -> mapper.map(dto, Status.class))
+                .map(status -> status.setId(new StatusId()))
+                .toList();
+
+        return repository.saveAll(statuesList)
+                .stream().map((this::toResponseDto))
+                .toList();
+    }
+
+    @Override
     public StatusResponse update(StatusId id, StatusRequest dto) {
         validateRequest(dto);
         Status status = mapper.map(dto, Status.class)
@@ -72,6 +85,11 @@ public class DefaultStatusService implements StatusService {
         if (repository.existsById(id))
             throw new StatusNotFoundException(id);
         repository.deleteById(id);
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
     }
 
     private StatusResponse toResponseDto(Status status) {
