@@ -1,10 +1,7 @@
 package com.wora.smartbank.orm.internal;
 
 import com.wora.smartbank.orm.api.JpaRepository;
-import com.wora.smartbank.orm.api.annotation.JPA;
 import com.wora.smartbank.orm.internal.util.TransactionManager;
-import jakarta.enterprise.context.Dependent;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Table;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -15,24 +12,22 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Dependent
-@JPA
 public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJpaRepository.class);
 
-    private Class<T> entityClass;
-    private Class<ID> idClass;
-    private EntityDetails entityDetails;
+    private final Class<T> entityClass;
+    private final Class<ID> idClass;
+    private final EntityDetails entityDetails;
 
-    @Inject
-    private EntityManagerFactory emf;
+    private final EntityManagerFactory emf;
 
-    public DefaultJpaRepository() {
-    }
 
-    public DefaultJpaRepository(Class<T> entityClass, Class<ID> idClass) {
-        System.out.println("instantiated");
+    public DefaultJpaRepository(EntityManagerFactory emf, Class<T> entityClass, Class<ID> idClass) {
+        System.out.println("new jpa instance");
+        System.out.println(entityClass);
+
+        this.emf = emf;
         this.entityClass = entityClass;
         this.idClass = idClass;
         this.entityDetails = getEntityDetails();
