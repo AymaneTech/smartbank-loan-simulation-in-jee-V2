@@ -40,6 +40,8 @@ public class DefaultRequestServiceTest {
     private ModelMapper mapper;
     @Mock
     private LoanCalculationValidationService calculationValidationService;
+    @Mock
+    private RequestStatusService requestStatusService;
 
     @InjectMocks
     /*
