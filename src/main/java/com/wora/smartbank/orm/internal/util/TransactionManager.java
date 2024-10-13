@@ -3,12 +3,15 @@ package com.wora.smartbank.orm.internal.util;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TransactionManager {
+
+    private static final Logger log = LoggerFactory.getLogger(TransactionManager.class);
 
     public static <T> T executeWithResult(EntityManagerFactory emf, Function<EntityManager, T> executor) {
         try (final EntityManager em = emf.createEntityManager()) {
@@ -18,11 +21,13 @@ public class TransactionManager {
                 T result = executor.apply(em);
                 tx.commit();
                 return result;
-            } catch (Exception ew) {
-                tx.rollback();
-                throw new PersistenceException(ew.getMessage());
-            } finally {
-                em.close();
+            } catch (Exception e) {
+                log.error("Error during transaction execution", e);
+                if (tx.isActive()) {
+                    log.info("Rolling back transaction");
+                    tx.rollback();
+                }
+                throw e;
             }
         }
     }
@@ -33,10 +38,16 @@ public class TransactionManager {
             try {
                 tx.begin();
                 executor.accept(em);
+                log.info("Before committing");
                 tx.commit();
+                log.info("After committing");
             } catch (Exception e) {
-                tx.rollback();
-                throw new PersistenceException(e.getMessage());
+                log.error("Error during transaction execution", e);
+                if (tx.isActive()) {
+                    log.info("Rolling back transaction");
+                    tx.rollback();
+                }
+                throw e;
             } finally {
                 em.close();
             }
