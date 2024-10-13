@@ -26,7 +26,7 @@ public class Status {
     @Embedded
     private Timestamp timestamp;
 
-    protected Status() {
+    public Status() {
 
     }
 

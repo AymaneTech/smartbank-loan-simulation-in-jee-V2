@@ -18,7 +18,7 @@ public interface StatusService {
 
     StatusResponse findById(StatusId statusId);
 
-    <V> StatusResponse findByColumn(String columnName, V value);
+    StatusResponse findByName(String name);
 
     void delete(StatusId id);
 

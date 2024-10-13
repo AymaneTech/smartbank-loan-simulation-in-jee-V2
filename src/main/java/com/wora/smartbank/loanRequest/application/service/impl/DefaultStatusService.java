@@ -48,10 +48,10 @@ public class DefaultStatusService implements StatusService {
     }
 
     @Override
-    public <V> StatusResponse findByColumn(String columnName, V value) {
-        return repository.findByColumn(columnName, value)
+    public StatusResponse findByName(String name) {
+        return repository.findByName(name)
                 .map(this::toResponseDto)
-                .orElseThrow(() -> new StatusNotFoundException(columnName, value));
+                .orElseThrow(() -> new StatusNotFoundException("name", name));
     }
 
     @Override

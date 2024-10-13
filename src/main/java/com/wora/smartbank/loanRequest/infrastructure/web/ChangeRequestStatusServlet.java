@@ -37,18 +37,18 @@ public class ChangeRequestStatusServlet extends HttpServlet {
         edit(req, res);
     }
 
-    public void doPost(HttpServletRequest req, HttpServletResponse res) {
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         update(req, res);
     }
 
-    public void update(HttpServletRequest req, HttpServletResponse res) {
+    public void update(HttpServletRequest req, HttpServletResponse res) throws IOException {
         log("here here here here ");
         final Map<String, String> collectedData = req.getParameterMap().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
         StatusId statusId = new StatusId(UUID.fromString(collectedData.get("statusId")));
 
         requestStatusService.create(new RequestStatusDto(collectedData.get("description"), statusId, requestId));
-
+        res.sendRedirect(req.getContextPath() + "/requests/all");
     }
 
     private void edit(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

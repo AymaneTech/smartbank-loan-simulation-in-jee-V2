@@ -88,7 +88,7 @@ public class DefaultPersistenceUnitInfo implements PersistenceUnitInfo {
     @Override
     public Properties getProperties() {
         Properties pr = new Properties();
-        pr.setProperty("hibernate.hbm2ddl.auto", "create");
+        pr.setProperty("hibernate.hbm2ddl.auto", "update");
 //        pr.setProperty("hibernate.show_sql", "true");
 //        pr.setProperty("hibernate.format_sql", "true");
 //        pr.setProperty("hibernate.use_sql_comments", "true");
