@@ -12,11 +12,11 @@ import java.util.List;
 @WebListener
 public class StartupListener implements ServletContextListener {
 
+    @Inject
     private StatusService service;
 
-    @Inject
-    public StartupListener(StatusService service) {
-        this.service = service;
+    public StartupListener() {
+
     }
 
     @Override
