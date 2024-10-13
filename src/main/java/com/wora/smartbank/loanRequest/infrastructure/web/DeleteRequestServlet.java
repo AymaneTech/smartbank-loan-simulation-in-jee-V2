@@ -23,14 +23,15 @@ public class DeleteRequestServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        String pathInfo = req.getPathInfo();
-
-        assert pathInfo != null;
-        String idStr = pathInfo.substring(1);
-        RequestId requestId = new RequestId(UUID.fromString(idStr));
-
-        service.delete(requestId);
+        service.delete(getRequestId(req));
 
         res.sendRedirect(req.getContextPath() + "/requests/all");
+    }
+
+    public RequestId getRequestId(HttpServletRequest req) {
+        String pathInfo = req.getPathInfo();
+        assert pathInfo != null;
+        String idStr = pathInfo.substring(1);
+        return new RequestId(UUID.fromString(idStr));
     }
 }

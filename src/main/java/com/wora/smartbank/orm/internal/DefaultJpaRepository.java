@@ -92,7 +92,7 @@ public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID
 
     @Override
     public List<T> findAll() {
-        log.info("fetching all entities");
+        log.info("fetching all {}", entityDetails.name());
         return TransactionManager.executeWithResult(emf, em -> {
             CriteriaQuery<T> query = em.getCriteriaBuilder()
                     .createQuery(entityClass);

@@ -64,7 +64,6 @@ public class UpdateRequestServlet extends HttpServlet {
 
     private void edit(HttpServletRequest req, HttpServletResponse res, RequestId id) throws ServletException, IOException {
         RequestResponse request = service.findById(id);
-        System.out.println(request);
         req.setAttribute("loanRequest", request);
         req.getRequestDispatcher("/pages/requests/request-update.jsp").forward(req, res);
     }

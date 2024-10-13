@@ -7,7 +7,7 @@ public interface CrudRepository<T, ID> {
 
     T update(T entity);
 
-    Optional<T> findById(ID ids);
+    Optional<T> findById(ID id);
 
     <V> Optional<T> findByColumn(String columnName, V value);
 

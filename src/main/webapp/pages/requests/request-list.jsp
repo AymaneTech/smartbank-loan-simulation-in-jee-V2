@@ -91,6 +91,8 @@
             <td>${request.hasExistingLoans()}</td>
             <td><a href="${pageContext.request.contextPath}/requests/delete/${request.id().value()}">delete</a></td>
             <td><a href="${pageContext.request.contextPath}/requests/update/${request.id().value()}">update</a></td>
+            <td><a href="${pageContext.request.contextPath}/requests/change-status/${request.id().value()}">change
+                status</a></td>
         </tr>
     </c:forEach>
     </tbody>
