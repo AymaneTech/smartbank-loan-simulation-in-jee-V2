@@ -15,10 +15,6 @@ public class StartupListener implements ServletContextListener {
     @Inject
     private StatusService service;
 
-    public StartupListener() {
-
-    }
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         if (service.count() == 0) {

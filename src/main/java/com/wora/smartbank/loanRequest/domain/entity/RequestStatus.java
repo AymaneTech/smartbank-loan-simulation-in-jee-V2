@@ -10,7 +10,10 @@ import jakarta.persistence.*;
 public class RequestStatus {
 
     @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id", nullable = false))
     private RequestStatusId id;
+
+    private String description;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
     private Status status;
@@ -24,12 +27,13 @@ public class RequestStatus {
     protected RequestStatus() {
     }
 
-    public RequestStatus(RequestStatusId id, Status status, Request request) {
-        this(status, request);
+    public RequestStatus(RequestStatusId id, String description, Status status, Request request) {
+        this(description, status, request);
         this.id = id;
     }
 
-    public RequestStatus(Status status, Request request) {
+    public RequestStatus(String description, Status status, Request request) {
+        this.description = description;
         this.status = status;
         this.request = request;
     }
@@ -40,6 +44,15 @@ public class RequestStatus {
 
     public RequestStatus setId(RequestStatusId id) {
         this.id = id;
+        return this;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public RequestStatus setDescription(String description) {
+        this.description = description;
         return this;
     }
 
