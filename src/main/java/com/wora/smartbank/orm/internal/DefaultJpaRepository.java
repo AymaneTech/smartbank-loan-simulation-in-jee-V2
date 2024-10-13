@@ -2,6 +2,7 @@ package com.wora.smartbank.orm.internal;
 
 import com.wora.smartbank.orm.api.JpaRepository;
 import com.wora.smartbank.orm.internal.util.TransactionManager;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Table;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -20,14 +21,11 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
     private final Class<ID> idClass;
     private final EntityDetails entityDetails;
 
-    private final EntityManagerFactory emf;
+    @Inject
+    private EntityManagerFactory emf;
 
 
-    public DefaultJpaRepository(EntityManagerFactory emf, Class<T> entityClass, Class<ID> idClass) {
-        System.out.println("new jpa instance");
-        System.out.println(entityClass);
-
-        this.emf = emf;
+    public DefaultJpaRepository(Class<T> entityClass, Class<ID> idClass) {
         this.entityClass = entityClass;
         this.idClass = idClass;
         this.entityDetails = getEntityDetails();
