@@ -7,10 +7,13 @@ import com.wora.smartbank.loanRequest.domain.repository.RequestStatusRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestStatusId;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class DefaultRequestStatusService implements RequestStatusService {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultRequestStatusService.class);
     private final RequestStatusRepository repository;
 
     @Inject

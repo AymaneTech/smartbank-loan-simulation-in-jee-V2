@@ -8,6 +8,7 @@ import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,7 @@ public class Request implements Serializable {
     private CustomerDetails customerDetails;
 
     @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE})
-    private List<RequestStatus> requestStatuses;
+    private List<RequestStatus> requestStatuses = new ArrayList<>();
 
     @Embedded
     private Timestamp timestamp;
@@ -85,6 +86,7 @@ public class Request implements Serializable {
 
     public void addRequestStatus(RequestStatus requestStatus) {
         this.requestStatuses.add(requestStatus);
+        requestStatus.setRequest(this);
     }
 
     @Override

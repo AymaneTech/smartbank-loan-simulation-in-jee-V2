@@ -4,15 +4,11 @@ import com.wora.smartbank.common.domain.exception.InvalidRequestException;
 import com.wora.smartbank.common.domain.valueObject.ValidationErrors;
 import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
-import com.wora.smartbank.loanRequest.application.dto.RequestStatusRequest;
 import com.wora.smartbank.loanRequest.application.service.LoanCalculationValidationService;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
 import com.wora.smartbank.loanRequest.application.service.RequestStatusService;
 import com.wora.smartbank.loanRequest.domain.Request;
-import com.wora.smartbank.loanRequest.domain.entity.RequestStatus;
-import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
-import com.wora.smartbank.loanRequest.domain.exception.StatusNotFoundException;
 import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
 import com.wora.smartbank.loanRequest.domain.repository.StatusRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
@@ -22,6 +18,8 @@ import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +27,7 @@ import java.util.Set;
 @ApplicationScoped
 public class DefaultRequestService implements RequestService {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultRequestService.class);
     private final RequestRepository repository;
     private final StatusRepository statusRepository;
     private final LoanCalculationValidationService calculationValidationService;
@@ -64,20 +63,10 @@ public class DefaultRequestService implements RequestService {
 
     @Override
     public RequestResponse create(RequestRequest dto) {
-        Status status = statusRepository.findByColumn("name", "PENDING")
-                .orElseThrow(() -> new StatusNotFoundException("name", "PENDING"));
-        System.out.println("here is the request that get found ");
-
         final Request request = validateAndCalculation(dto)
                 .setId(new RequestId());
 
-        final Request savedRequest = repository.save(request);
-        final RequestStatus requestStatus = requestStatusService.save(new RequestStatusRequest(
-                "this request's status is sets to pending until get reviewed by the team",
-                status,
-                savedRequest
-        ));
-        savedRequest.addRequestStatus(requestStatus);
+        final Request savedRequest = repository.saveRequestWithDefaultStatus(request);
 
         return mapper.map(savedRequest, RequestResponse.class);
     }
