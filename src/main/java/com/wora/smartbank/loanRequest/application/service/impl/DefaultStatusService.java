@@ -7,9 +7,8 @@ import com.wora.smartbank.loanRequest.application.dto.StatusResponse;
 import com.wora.smartbank.loanRequest.application.service.StatusService;
 import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.exception.StatusNotFoundException;
+import com.wora.smartbank.loanRequest.domain.repository.StatusRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
-import com.wora.smartbank.orm.api.JpaRepository;
-import com.wora.smartbank.orm.api.annotation.JPA;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -22,12 +21,12 @@ import java.util.Set;
 @ApplicationScoped
 public class DefaultStatusService implements StatusService {
 
-    private final JpaRepository<Status, StatusId> repository;
+    private final StatusRepository repository;
     private final ModelMapper mapper;
     private final Validator validator;
 
     @Inject
-    public DefaultStatusService(@JPA JpaRepository<Status, StatusId> repository, ModelMapper mapper, Validator validator) {
+    public DefaultStatusService(StatusRepository repository, ModelMapper mapper, Validator validator) {
         this.repository = repository;
         this.mapper = mapper;
         this.validator = validator;

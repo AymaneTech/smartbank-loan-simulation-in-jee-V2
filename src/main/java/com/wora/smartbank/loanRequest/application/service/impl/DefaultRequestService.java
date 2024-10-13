@@ -4,20 +4,19 @@ import com.wora.smartbank.common.domain.exception.InvalidRequestException;
 import com.wora.smartbank.common.domain.valueObject.ValidationErrors;
 import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.RequestStatusRequest;
 import com.wora.smartbank.loanRequest.application.service.LoanCalculationValidationService;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
 import com.wora.smartbank.loanRequest.application.service.RequestStatusService;
-import com.wora.smartbank.loanRequest.application.service.StatusService;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.entity.RequestStatus;
 import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
 import com.wora.smartbank.loanRequest.domain.exception.StatusNotFoundException;
+import com.wora.smartbank.loanRequest.domain.repository.RequestRepository;
+import com.wora.smartbank.loanRequest.domain.repository.StatusRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
-import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
-import com.wora.smartbank.orm.api.JpaRepository;
-import com.wora.smartbank.orm.api.annotation.JPA;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
@@ -30,8 +29,8 @@ import java.util.Set;
 @ApplicationScoped
 public class DefaultRequestService implements RequestService {
 
-    private final JpaRepository<Request, RequestId> repository;
-    private final JpaRepository<Status, StatusId> statusRepository;
+    private final RequestRepository repository;
+    private final StatusRepository statusRepository;
     private final LoanCalculationValidationService calculationValidationService;
     private final RequestStatusService requestStatusService;
     private final ModelMapper mapper;
@@ -39,7 +38,7 @@ public class DefaultRequestService implements RequestService {
 
 
     @Inject
-    public DefaultRequestService(@JPA JpaRepository<Request, RequestId> repository, JpaRepository<Status, StatusId> statusRepository, RequestStatusService requestStatusService, ModelMapper mapper, Validator validator, StatusService statusService, LoanCalculationValidationService calculationValidationService) {
+    public DefaultRequestService(RequestRepository repository, StatusRepository statusRepository, RequestStatusService requestStatusService, ModelMapper mapper, Validator validator, LoanCalculationValidationService calculationValidationService) {
         this.repository = repository;
         this.statusRepository = statusRepository;
         this.calculationValidationService = calculationValidationService;
@@ -67,12 +66,17 @@ public class DefaultRequestService implements RequestService {
     public RequestResponse create(RequestRequest dto) {
         Status status = statusRepository.findByColumn("name", "PENDING")
                 .orElseThrow(() -> new StatusNotFoundException("name", "PENDING"));
+        System.out.println("here is the request that get found ");
 
         final Request request = validateAndCalculation(dto)
                 .setId(new RequestId());
 
         final Request savedRequest = repository.save(request);
-        final RequestStatus requestStatus = requestStatusService.save(savedRequest, status);
+        final RequestStatus requestStatus = requestStatusService.save(new RequestStatusRequest(
+                "this request's status is sets to pending until get reviewed by the team",
+                status,
+                savedRequest
+        ));
         savedRequest.addRequestStatus(requestStatus);
 
         return mapper.map(savedRequest, RequestResponse.class);

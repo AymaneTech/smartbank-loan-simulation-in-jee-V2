@@ -1,30 +1,30 @@
 package com.wora.smartbank.loanRequest.application.service.impl;
 
+import com.wora.smartbank.loanRequest.application.dto.RequestStatusRequest;
 import com.wora.smartbank.loanRequest.application.service.RequestStatusService;
-import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.entity.RequestStatus;
-import com.wora.smartbank.loanRequest.domain.entity.Status;
+import com.wora.smartbank.loanRequest.domain.repository.RequestStatusRepository;
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestStatusId;
-import com.wora.smartbank.orm.api.JpaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class DefaultRequestStatusService implements RequestStatusService {
 
-    private final JpaRepository<RequestStatus, RequestStatusId> repository;
+    private final RequestStatusRepository repository;
 
     @Inject
-    public DefaultRequestStatusService(JpaRepository<RequestStatus, RequestStatusId> repository) {
+    public DefaultRequestStatusService(RequestStatusRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public RequestStatus save(Request request, Status status) {
+    public RequestStatus save(RequestStatusRequest dto) {
         final RequestStatus requestStatus = new RequestStatus(
                 new RequestStatusId(),
-                status,
-                request
+                dto.description(),
+                dto.status(),
+                dto.request()
         );
         return repository.save(requestStatus);
     }
