@@ -4,6 +4,68 @@
 <head>
     <title>Update Request</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/updateTable.css">
+    <style>
+        h1{
+            display: flex !important;
+            justify-content: center !important;
+        }
+
+        .update-form{
+            margin: 186px !important;
+            margin-top: 69px !important;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        input[type="checkbox"] {
+            margin-top: 10px;
+        }
+
+        input[type="submit"] {
+
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <h1>Update Request</h1>
