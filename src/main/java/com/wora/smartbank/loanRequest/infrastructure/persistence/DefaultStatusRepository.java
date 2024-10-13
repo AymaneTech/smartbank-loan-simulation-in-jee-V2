@@ -27,7 +27,6 @@ public class DefaultStatusRepository extends DefaultJpaRepository<Status, Status
         return TransactionManager.executeWithResult(emf, em -> {
             TypedQuery<Status> query = em.createQuery("SELECT s FROM Status s WHERE s.name = :name", Status.class);
             query.setParameter("name", value);
-            log.debug("debugging this shit  {}", query.getSingleResult());
             return Optional.ofNullable(query.getSingleResult());
         });
     }
