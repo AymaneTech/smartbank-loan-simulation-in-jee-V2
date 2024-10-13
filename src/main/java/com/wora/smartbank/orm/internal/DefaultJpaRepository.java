@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
+public abstract class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJpaRepository.class);
 
@@ -22,7 +22,7 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
     private final EntityDetails entityDetails;
 
     @Inject
-    private EntityManagerFactory emf;
+    protected EntityManagerFactory emf;
 
 
     public DefaultJpaRepository(Class<T> entityClass, Class<ID> idClass) {
@@ -33,8 +33,10 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
 
     @Override
     public T save(T entity) {
-        log.info("Saving entity to database");
-        TransactionManager.executeWithoutResult(emf, em -> em.persist(entity));
+        log.info("Saving {} to database", entityDetails.name());
+        TransactionManager.executeWithoutResult(emf, em -> {
+            em.persist(entity);
+        });
         return entity;
     }
 
@@ -59,17 +61,14 @@ public class DefaultJpaRepository<T, ID> implements JpaRepository<T, ID> {
     }
 
     public <V> Optional<T> findByColumn(String columnName, V value) {
-        log.info("Fetching from {} by column {} ", entityDetails.tableName(), columnName);
+        log.info("Fetching from {} by column {} and value {}", entityDetails.tableName(), columnName, value);
+
         return TransactionManager.executeWithResult(emf,
                 em -> {
                     CriteriaBuilder cb = em.getCriteriaBuilder();
                     CriteriaQuery<T> query = cb.createQuery(entityClass);
                     Root<T> root = query.from(entityClass);
-                    if (value == null) {
-                        query.select(root).where(cb.isNull(root.get(columnName)));
-                    } else {
-                        query.select(root).where(cb.equal(root.get(columnName), value));
-                    }
+                    query.select(root).where(cb.equal(root.get(columnName), value));
                     final T result = em.createQuery(query).getSingleResult();
                     return Optional.ofNullable(result);
                 });
