@@ -5,6 +5,7 @@ import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class Status {
     private String name;
 
     @OneToMany(mappedBy = "status", cascade = {CascadeType.PERSIST, CascadeType.DETACH})
-    private List<RequestStatus> requestStatuses;
+    private List<RequestStatus> requestStatuses = new ArrayList<>();
 
     @Embedded
     private Timestamp timestamp;
@@ -72,5 +73,15 @@ public class Status {
     public Status setRequestStatuses(List<RequestStatus> requestStatuses) {
         this.requestStatuses = requestStatuses;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Status{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", requestStatuses=" + requestStatuses +
+                ", timestamp=" + timestamp +
+                '}';
     }
 }
