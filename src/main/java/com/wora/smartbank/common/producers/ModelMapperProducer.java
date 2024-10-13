@@ -2,7 +2,9 @@ package com.wora.smartbank.common.producers;
 
 import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
 import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.StatusResponse;
 import com.wora.smartbank.loanRequest.domain.Request;
+import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.valueObject.Cin;
 import com.wora.smartbank.loanRequest.domain.valueObject.CustomerDetails;
 import com.wora.smartbank.loanRequest.domain.valueObject.LoanDetails;
@@ -54,5 +56,9 @@ public class ModelMapperProducer {
             );
         }, Request.class, RequestResponse.class);
 
+        mapper.addConverter(context -> {
+            final Status source = context.getSource();
+            return new StatusResponse(source.id(), source.name());
+        }, Status.class, StatusResponse.class);
     }
 }
