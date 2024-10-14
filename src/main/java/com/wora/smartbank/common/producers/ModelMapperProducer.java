@@ -1,8 +1,9 @@
 package com.wora.smartbank.common.producers;
 
 import com.wora.smartbank.loanRequest.application.dto.request.RequestRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.HistoryItem;
 import com.wora.smartbank.loanRequest.application.dto.response.RequestResponse;
-import com.wora.smartbank.loanRequest.application.dto.response.RequestStatusResponse;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestWithHistory;
 import com.wora.smartbank.loanRequest.application.dto.response.StatusResponse;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.entity.Status;
@@ -13,6 +14,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+
+import java.util.List;
 
 public class ModelMapperProducer {
 
@@ -47,12 +50,13 @@ public class ModelMapperProducer {
             );
         }, RequestRequest.class, Request.class);
 
-        mapper.addConverter(context -> {
-            final Request source = context.getSource();
-            return mapToRequestResponse(context);
-        }, Request.class, RequestResponse.class);
+        mapper.addConverter(context -> mapToRequestResponse(context.getSource()),
+                Request.class, RequestResponse.class);
 
-        mapper.addConverter();
+        mapper.addConverter(context -> {
+            Request source = context.getSource();
+            return new RequestWithHistory(mapToRequestResponse(source), historyItems(source));
+        }, Request.class, RequestWithHistory.class);
 
         mapper.addConverter(context -> {
             final Status source = context.getSource();
@@ -61,7 +65,24 @@ public class ModelMapperProducer {
 
     }
 
-    private RequestStatusResponse mapToRequestResponse(Request context){
-        
+    private List<HistoryItem> historyItems(Request source) {
+        return source.requestStatuses()
+                .stream()
+                .map(requestStatus -> new HistoryItem(new StatusResponse(
+                        requestStatus.status()),
+                        requestStatus.description(),
+                        requestStatus.timestamp().createdAt()
+                ))
+                .toList();
+    }
+
+    private RequestResponse mapToRequestResponse(Request source) {
+        return new RequestResponse(
+                source.id(), source.loanDetails().project(), source.loanDetails().amount(), source.loanDetails().duration(), source.loanDetails().monthly(),
+                source.customerDetails().title(), source.customerDetails().firstName(), source.customerDetails().lastName(), source.customerDetails().email(),
+                source.customerDetails().phone(), source.customerDetails().profession(), source.customerDetails().cin().value(), source.customerDetails().dateOfBirth(), source.customerDetails().employmentStartDate(),
+                source.customerDetails().monthlyIncome(), source.customerDetails().hasExistingLoans()
+        );
+
     }
 }
