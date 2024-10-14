@@ -1,6 +1,5 @@
-package com.wora.smartbank.loanRequest.application.dto;
+package com.wora.smartbank.loanRequest.application.dto.request;
 
-import com.wora.smartbank.common.domain.valueObject.Price;
 import com.wora.smartbank.loanRequest.domain.valueObject.Title;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

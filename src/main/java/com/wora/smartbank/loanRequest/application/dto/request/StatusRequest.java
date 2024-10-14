@@ -1,4 +1,4 @@
-package com.wora.smartbank.loanRequest.application.dto;
+package com.wora.smartbank.loanRequest.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

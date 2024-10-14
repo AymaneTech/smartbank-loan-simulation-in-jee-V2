@@ -1,4 +1,4 @@
-package com.wora.smartbank.loanRequest.application.dto;
+package com.wora.smartbank.loanRequest.application.dto.request;
 
 import com.wora.smartbank.loanRequest.domain.valueObject.RequestId;
 import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
