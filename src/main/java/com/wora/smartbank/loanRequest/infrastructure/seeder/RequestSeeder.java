@@ -1,6 +1,6 @@
 package com.wora.smartbank.loanRequest.infrastructure.seeder;
 
-import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
+import com.wora.smartbank.loanRequest.application.dto.request.RequestRequest;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.valueObject.*;
 

@@ -1,8 +1,8 @@
 package com.wora.smartbank.loanRequest.infrastructure.web;
 
-import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
-import com.wora.smartbank.loanRequest.application.dto.RequestStatusDto;
-import com.wora.smartbank.loanRequest.application.dto.StatusResponse;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.RequestStatusDto;
+import com.wora.smartbank.loanRequest.application.dto.response.StatusResponse;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
 import com.wora.smartbank.loanRequest.application.service.RequestStatusService;
 import com.wora.smartbank.loanRequest.application.service.StatusService;

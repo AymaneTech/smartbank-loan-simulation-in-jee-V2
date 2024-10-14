@@ -1,7 +1,7 @@
 package com.wora.smartbank.loanRequest.infrastructure.web;
 
-import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
-import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.RequestRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestResponse;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
 import com.wora.smartbank.loanRequest.domain.valueObject.Title;
 import jakarta.inject.Inject;
