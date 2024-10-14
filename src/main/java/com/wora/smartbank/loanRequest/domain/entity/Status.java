@@ -80,7 +80,6 @@ public class Status {
         return "Status{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", requestStatuses=" + requestStatuses +
                 ", timestamp=" + timestamp +
                 '}';
     }

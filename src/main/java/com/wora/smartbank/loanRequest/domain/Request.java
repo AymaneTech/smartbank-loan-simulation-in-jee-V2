@@ -25,7 +25,7 @@ public class Request implements Serializable {
     @Embedded
     private CustomerDetails customerDetails;
 
-    @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private List<RequestStatus> requestStatuses = new ArrayList<>();
 
     @Embedded

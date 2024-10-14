@@ -1,7 +1,7 @@
 package com.wora.smartbank.loanRequest.application.service;
 
-import com.wora.smartbank.loanRequest.application.dto.StatusRequest;
-import com.wora.smartbank.loanRequest.application.dto.StatusResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.StatusRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.StatusResponse;
 import com.wora.smartbank.loanRequest.domain.valueObject.StatusId;
 
 import java.util.List;
