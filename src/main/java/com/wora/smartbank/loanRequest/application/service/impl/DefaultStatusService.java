@@ -2,8 +2,8 @@ package com.wora.smartbank.loanRequest.application.service.impl;
 
 import com.wora.smartbank.common.domain.exception.InvalidRequestException;
 import com.wora.smartbank.common.domain.valueObject.ValidationErrors;
-import com.wora.smartbank.loanRequest.application.dto.StatusRequest;
-import com.wora.smartbank.loanRequest.application.dto.StatusResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.StatusRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.StatusResponse;
 import com.wora.smartbank.loanRequest.application.service.StatusService;
 import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.exception.StatusNotFoundException;

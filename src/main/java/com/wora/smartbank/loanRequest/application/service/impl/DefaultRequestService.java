@@ -2,8 +2,9 @@ package com.wora.smartbank.loanRequest.application.service.impl;
 
 import com.wora.smartbank.common.domain.exception.InvalidRequestException;
 import com.wora.smartbank.common.domain.valueObject.ValidationErrors;
-import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
-import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.RequestRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestWithHistory;
 import com.wora.smartbank.loanRequest.application.service.LoanCalculationValidationService;
 import com.wora.smartbank.loanRequest.application.service.RequestService;
 import com.wora.smartbank.loanRequest.domain.Request;
@@ -53,6 +54,13 @@ public class DefaultRequestService implements RequestService {
     public RequestResponse findById(RequestId id) {
         return repository.findById(id)
                 .map(r -> mapper.map(r, RequestResponse.class))
+                .orElseThrow(() -> new RequestNotFoundException(id));
+    }
+
+    @Override
+    public RequestWithHistory findByIdWithHistory(RequestId id) {
+        return repository.findById(id)
+                .map(r -> mapper.map(r, RequestWithHistory.class))
                 .orElseThrow(() -> new RequestNotFoundException(id));
     }
 

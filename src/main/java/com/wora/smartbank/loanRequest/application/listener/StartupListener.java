@@ -1,6 +1,6 @@
 package com.wora.smartbank.loanRequest.application.listener;
 
-import com.wora.smartbank.loanRequest.application.dto.StatusRequest;
+import com.wora.smartbank.loanRequest.application.dto.request.StatusRequest;
 import com.wora.smartbank.loanRequest.application.service.StatusService;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletContextEvent;
