@@ -1,8 +1,9 @@
 package com.wora.smartbank.common.producers;
 
-import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
-import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
-import com.wora.smartbank.loanRequest.application.dto.StatusResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.RequestRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestStatusResponse;
+import com.wora.smartbank.loanRequest.application.dto.response.StatusResponse;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.entity.Status;
 import com.wora.smartbank.loanRequest.domain.valueObject.Cin;
@@ -48,17 +49,19 @@ public class ModelMapperProducer {
 
         mapper.addConverter(context -> {
             final Request source = context.getSource();
-            return new RequestResponse(
-                    source.id(), source.loanDetails().project(), source.loanDetails().amount(), source.loanDetails().duration(), source.loanDetails().monthly(),
-                    source.customerDetails().title(), source.customerDetails().firstName(), source.customerDetails().lastName(), source.customerDetails().email(),
-                    source.customerDetails().phone(), source.customerDetails().profession(), source.customerDetails().cin().value(), source.customerDetails().dateOfBirth(), source.customerDetails().employmentStartDate(),
-                    source.customerDetails().monthlyIncome(), source.customerDetails().hasExistingLoans()
-            );
+            return mapToRequestResponse(context);
         }, Request.class, RequestResponse.class);
+
+        mapper.addConverter();
 
         mapper.addConverter(context -> {
             final Status source = context.getSource();
             return new StatusResponse(source.id(), source.name());
         }, Status.class, StatusResponse.class);
+
+    }
+
+    private RequestStatusResponse mapToRequestResponse(Request context){
+        
     }
 }
