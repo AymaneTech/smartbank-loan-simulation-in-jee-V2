@@ -1,7 +1,7 @@
 package com.wora.smartbank.loanRequest.application.service;
 
-import com.wora.smartbank.loanRequest.application.dto.RequestRequest;
-import com.wora.smartbank.loanRequest.application.dto.RequestResponse;
+import com.wora.smartbank.loanRequest.application.dto.request.RequestRequest;
+import com.wora.smartbank.loanRequest.application.dto.response.RequestResponse;
 import com.wora.smartbank.loanRequest.application.service.impl.DefaultRequestService;
 import com.wora.smartbank.loanRequest.domain.Request;
 import com.wora.smartbank.loanRequest.domain.exception.RequestNotFoundException;
